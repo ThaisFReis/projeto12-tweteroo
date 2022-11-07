@@ -12,27 +12,29 @@ const tweets = [];
 /* Post Sing Up */
 
 app.post("/sing-up", (req, res) => {
-    const user = req.body;
-    constavatar = user.body.avatar;
+    const {username, avatar} = req.body;
 
-    users.push(user);
-    res.send("OK")
+    if (!username || !avatar) {
+        res.status(400).send("Todos os campos são obrigatórios");
+        return;
+    }
+
+    users.push({username, avatar});
+    res.status(200).send("OK");
 });
 
 /* Post Tweets */
 
 app.post("/tweets", (req, res) => {
-    const tweet = {
-        username: req.body.username,
-        tweet: req.body.tweet,
-        avatar: login.find((user) => user.username === req.body.username).avatar,
-    }
+        const {username} = req.body.username;
+        const {tweet}  = req.body.tweet;
+        const {avatar} = login.find((user) => user.username === req.body.username).avatar
 
     if (tweet.tweet === "") {
         return res.status(400).send("Escreva algo para postar");
     }
 
-    tweets.push(tweet);
+    tweets.push({username, tweet, avatar});
     res.status(201).send(tweet);
     }
 )
@@ -50,7 +52,7 @@ app.get("/tweets", (req, res) => {
 
     const tweetsPage = tweets.slice(offset, offset + limit);
 
-    res.send(tweetsPage);
+    res.send(tweetsPage).reverse();
 })
 
 app.listen(PORT, () => {
